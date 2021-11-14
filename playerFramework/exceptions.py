@@ -29,3 +29,7 @@ class InvalidTrackPath(frameworkError):
 class songObjectNotInitialized(frameworkError):
     def __init__(self, *args, **kwargs):
         pass
+
+class unableToReadBytes(frameworkError):
+    def __init__(self, *args, **kwargs):
+        pass

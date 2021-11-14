@@ -1,6 +1,6 @@
 import setuptools
 reqs = ['utils-s', 'pydub']
-version = '2.5'
+version = '2.6'
 
 setuptools.setup(
     name='playerFramework',

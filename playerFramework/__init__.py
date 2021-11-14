@@ -66,7 +66,7 @@ class player:
         self.cs_playing = None
         self.file_resume_bytes = None
 
-        self.exitCodes = [15, 9, 2]
+        self.exitCodes = []
 
         if info.__contains__('exit_codes'):
             for code in info['exit_codes']:
@@ -175,10 +175,12 @@ class player:
                 return_code = int(abs(process.returncode))
 
                 if self.internalKill is not True:
-                    for code in self.exitCodes:
-                        if return_code == code:
+                    if not self.exitCodes.__contains__(return_code):
+                        if return_code != 0:
                             self._reset()
-                            raise ProcessTerminatedExternally(code)
+                            err_msg = 'Expected return code 0, got return code: {}'.format(return_code)
+                            raise ProcessTerminatedExternally(err_msg)
+
 
                 # print('Return Code: ' + return_code.__str__())
                 # print('exit code', return_code)
@@ -240,11 +242,11 @@ class player:
 
     def pause(self):
         try:
-            self.exit()
+            self._kill_player()
         except TypeError:
             try:
                 time.sleep(1)  # some times it takes a second for all the variables to load into their place
-                self.exit()
+                self._kill_player()
             except TypeError:
                 raise songObjectNotInitialized('No song is currently playing')
 
@@ -284,23 +286,26 @@ class player:
 
 
     def resume(self):
-        file_name = random.random().__str__()
-        with open(file_name, 'wb+') as file:
-            file.write(self.file_resume_bytes)
+        if self.file_resume_bytes is not None:
+            file_name = random.random().__str__()
+            with open(file_name, 'wb+') as file:
+                file.write(self.file_resume_bytes)
 
-        path = paths.join(os.getcwd(), file_name)
-        # print(path)
+            path = paths.join(os.getcwd(), file_name)
+            # print(path)
 
-        # self.play_track(self.cs_playing.path, main_thread=True)
-        self.thread = thread(self.play_track, [path, True])
+            # self.play_track(self.cs_playing.path, main_thread=True)
+            self.thread = thread(self.play_track, [path, True])
+            self._calculations(clss=self.cs_playing, re=False)
 
-        self._calculations(clss=self.cs_playing, re=False)
+            def remove(file_path):
+                time.sleep(2)
+                os.remove(file_path)
 
-        def remove(file_path):
-            time.sleep(2)
-            os.remove(file_path)
-
-        thread(remove, [path])
+            thread(remove, [path])
+        elif self.file_resume_bytes is None:
+            msg = 'Please make sure to call .pause() before .resume()'
+            raise unableToReadBytes(msg)
 
 
 
@@ -335,6 +340,8 @@ class player:
         except ProcessLookupError:
             pass
 
+        self._reset()
+
     def kill_all(self):
         """
         kills all instances of the player
@@ -342,4 +349,3 @@ class player:
         """
         exec_name = self.exec.last_component()
         command(['killall', exec_name], quite=True)
-
