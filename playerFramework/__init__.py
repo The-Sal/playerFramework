@@ -325,10 +325,11 @@ class player:
         return False
 
     def _kill_player(self):
-        self.internalKill = True
-        os.kill(self.pid, signal.SIGTERM)
-        sleep(0.1)
-        self.internalKill = False
+        if isinstance(self.pid, int):
+            self.internalKill = True
+            os.kill(self.pid, signal.SIGTERM)
+            sleep(0.1)
+            self.internalKill = False
 
     def exit(self):
         # Old documentation
