@@ -1,6 +1,6 @@
 # playerFramework
-playerFramework allows you to play, pause audio files in python easily without having to miss around with
-PyobjC and millions of dependencies.
+playerFramework allows you to play, pause audio files in python easily without having to mess around with
+PyObjC and millions of dependencies.
 
 ##  Quickstart
 
