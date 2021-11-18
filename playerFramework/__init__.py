@@ -82,12 +82,12 @@ class player:
     def __info_object():
         """return a blank object of type playerStorageObject"""
         class playerStorageObject:
-            def __init__(self, thread):
+            def __init__(self, running_thread):
 
-                if not isinstance(thread, Thread):
-                    raise songObjectNotInitialized('Expected type Thread got type: {}'.format(type(thread)))
+                if not isinstance(running_thread, Thread):
+                    raise songObjectNotInitialized('Expected type Thread got type: {}'.format(type(running_thread)))
 
-                self.thread = thread
+                self.thread = running_thread
 
         return playerStorageObject
 
