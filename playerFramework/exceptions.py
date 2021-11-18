@@ -33,3 +33,7 @@ class songObjectNotInitialized(frameworkError):
 class unableToReadBytes(frameworkError):
     def __init__(self, *args, **kwargs):
         pass
+
+class invalidInternalType(frameworkError):
+    def __init__(self, *args, **kwargs):
+        pass

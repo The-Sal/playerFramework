@@ -78,6 +78,19 @@ class player:
 
         self._handle_args()
 
+    @staticmethod
+    def __info_object():
+        """return a blank object of type playerStorageObject"""
+        class playerStorageObject:
+            def __init__(self, thread):
+
+                if not isinstance(thread, Thread):
+                    raise songObjectNotInitialized('Expected type Thread got type: {}'.format(type(thread)))
+
+                self.thread = thread
+
+        return playerStorageObject
+
 
 
     def _handle_args(self):
@@ -199,7 +212,7 @@ class player:
 
         if self.warning:
             if not paths.file_exists(track_path):
-                raise exceptions.InvalidTrackPath('The file "{}" does not exist'.format(track_path))
+                raise InvalidTrackPath('The file "{}" does not exist'.format(track_path))
 
         if self.is_playing():
             try:
@@ -237,6 +250,32 @@ class player:
                 cls.err = processErr.__str__()
 
         thread(func=internal, args=[self, clss, re])
+
+
+    def fake_pause(self):
+        """if the audio has paused due to because of IO file, or external reasons call
+        fake_pause() to reflect it in the current_song obejct"""
+
+        # So we have to make self.is_alive = False
+        # which should break the _calculations loop
+        # then we can fake_resume
+
+        # we need to store a refrence to this object
+        thread_with_player = self.thread
+        self.thread = False
+
+        infoObj = self.__info_object()(thread=thread_with_player)
+        self.file_resume_bytes = infoObj
+
+
+    def fake_resume(self):
+        """if the audio is resumed externally (or via IO file) reflect on cs via this method"""
+        try:
+            self.thread = self.file_resume_bytes.thread
+            self._calculations(clss=self.cs_playing, re=False)
+        except TypeError:
+            raise invalidInternalType('Expected type playerStorageObject got type: {}'
+                                      .format(type(self.file_resume_bytes)))
 
 
 
