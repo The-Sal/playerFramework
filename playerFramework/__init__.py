@@ -264,7 +264,7 @@ class player:
         thread_with_player = self.thread
         self.thread = False
 
-        infoObj = self.__info_object()(thread=thread_with_player)
+        infoObj = self.__info_object()(thread_with_player)
         self.file_resume_bytes = infoObj
 
 
