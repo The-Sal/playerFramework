@@ -231,13 +231,19 @@ class player:
     def _calculations(self, clss, re=True):
         def internal(self_, cls, re_write=True):
             try:
+                now = time.time()
                 from pydub.audio_segment import AudioSegment
                 cls.audio_segment = AudioSegment.from_file(cls.path)
                 cls.audio = round(cls.audio_segment.duration_seconds)
+                post = time.time()
+
 
                 if re_write:
                     cls.seconds_passed = 0
                     cls.percentage_completed = 0
+
+                # the time it took for ffmpeg to load and stuff
+                cls.seconds_passed += int(post - now)
 
                 while self_.is_playing():
                     if cls.seconds_passed >= cls.audio:
