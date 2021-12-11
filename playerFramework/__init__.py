@@ -306,7 +306,12 @@ class player:
         # self.percentage_completed = 0
         # self.err = None
 
-        # lets create a new AudioSegment instead of referencing the one in current song
+        errmsg = 'Song is not initialised yet, make sure the player is still playing'
+
+
+        if self.cs_playing is None:
+            raise songObjectNotInitialized(errmsg)
+
         cs = self.cs_playing
         song = self.cs_playing.audio_segment
         time_lapsed = cs.seconds_passed
@@ -316,7 +321,6 @@ class player:
         try:
             rest_of_song = song[-time_left:]
         except TypeError:
-            errmsg = 'Song is not initialised yet, make sure the player is still playing'
             raise songObjectNotInitialized(errmsg)
         temporary_file = random.random().__str__()
 
@@ -348,6 +352,8 @@ class player:
                 os.remove(file_path)
 
             thread(remove, [path])
+
+            self.file_resume_bytes = None
         elif self.file_resume_bytes is None:
             msg = 'Please make sure to call .pause() before .resume()'
             raise unableToReadBytes(msg)
