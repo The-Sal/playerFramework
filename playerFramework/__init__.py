@@ -117,7 +117,7 @@ class player:
                 with open(self.info['io file'], 'w+') as file:
                     file.write(self.info[key_name])
             else:
-                writeINFO = self.info[key_name].format(Format)
+                writeINFO = str(self.info[key_name]).format(Format)
                 with open(self.info['io file'], 'w+') as file:
                     file.write(writeINFO)
 
@@ -189,9 +189,9 @@ class player:
 
                 if self.internalKill is not True:
                     if not self.exitCodes.__contains__(return_code):
-                        if return_code != 0:
+                        if int(return_code) != 0:
                             self._reset()
-                            err_msg = 'Expected return code 0, got return code: {}'.format(return_code)
+                            err_msg = 'Unexpected return code: {}'.format(return_code)
                             raise ProcessTerminatedExternally(err_msg)
 
 
